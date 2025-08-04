@@ -11,13 +11,18 @@ This project is a Python-based NMEA (National Marine Electronics Association) se
 - **CSV Export**: Exports processed GPS data to CSV format for easy analysis
 - **Error Handling**: Includes file not found and invalid sentence format handling
 - **Detailed Output**: Displays all NMEA sentence components for debugging and verification
+- **Graphical User Interface**: User-friendly PyQt5-based GUI for easy file processing and visualization
+- **Interactive Maps**: Real-time map visualization using Folium with GPS points and route tracking
+- **Data Table View**: Tabular display of processed GPS coordinates and altitude data
 
 ## File Structure
 ```
 nmea.py         - Main Python script containing the NMEA parser
+gui.py          - PyQt5-based graphical user interface for NMEA processing
 data.txt        - Input file containing NMEA sentences
 nmea_output.csv - Output CSV file with processed GPS data
 README.md       - This documentation file
+qgis_files/     - QGIS project files for advanced spatial analysis
 ```
 
 ## How It Works
@@ -65,15 +70,35 @@ The CSV file contains three columns:
 
 ### Prerequisites
 - Python 3.x
-- No additional libraries required (uses built-in `csv` module)
+- For command-line usage: No additional libraries required (uses built-in `csv` module)
+- For GUI usage: PyQt5, folium libraries required
 
-### Running the Parser
+### Installation
+For GUI usage, install the required dependencies:
+```bash
+pip install PyQt5 folium
+```
+
+### Running the Command-Line Parser
 1. Place your NMEA data in `data.txt`
 2. Run the script:
    ```bash
    python3 nmea.py
    ```
 3. Check the output in `nmea_output.csv`
+
+### Running the GUI Application
+1. Launch the graphical interface:
+   ```bash
+   python3 gui.py
+   ```
+2. Use the GUI features:
+   - **File Selection**: Click "NMEA Dosyası Seç" to select NMEA or CSV files
+   - **Data Processing**: Click "Verileri İşle" to parse the selected file
+   - **Table View**: View processed GPS data in the left panel table
+   - **Map Visualization**: Click "Haritada Göster" to display GPS points on an interactive map
+   - **Save Results**: Click "CSV Olarak Kaydet" to export processed data
+   - **Clear Data**: Click "Temizle" to reset the application
 
 ### Sample Input
 ```
@@ -87,6 +112,56 @@ latitude,longitude,altitude
 40.8539,29.390933333333333,45.5
 40.855,29.391666666666666,46.0
 ```
+
+## GUI Application Features
+
+### Interface Overview
+The NMEA Parser GUI provides an intuitive graphical interface built with PyQt5 for processing and visualizing GPS data. The application features a dual-panel layout with data table view on the left and interactive map visualization on the right.
+
+### Key GUI Features
+
+#### 🗂️ **File Management**
+- **Multi-format Support**: Supports NMEA (.nmea, .txt) and CSV files
+- **Drag & Drop Interface**: Easy file selection through file dialog
+- **File Validation**: Automatic detection and processing of different file formats
+
+#### 📊 **Data Processing & Display**
+- **Real-time Table View**: Displays processed GPS coordinates (latitude, longitude, altitude)
+- **Data Validation**: Automatic filtering of invalid or corrupted GPS data
+- **Progress Feedback**: Status updates and processing information
+- **Error Handling**: User-friendly error messages and warnings
+
+#### 🗺️ **Interactive Map Visualization**
+- **Live Map Display**: Real-time GPS point visualization using Folium
+- **Route Tracking**: Automatic connection of GPS points to show travel routes
+- **Interactive Markers**: Clickable markers with detailed coordinate information
+- **Zoom Controls**: Full pan and zoom capabilities for detailed examination
+- **Multi-point Support**: Handles single points to complex route data
+
+#### 💾 **Export Capabilities**
+- **CSV Export**: Save processed data in standard CSV format
+- **Custom File Names**: User-defined output file naming
+- **Data Preservation**: Maintains coordinate precision and altitude information
+
+#### 🎛️ **User Controls**
+- **Process Button**: Initiates NMEA data parsing and conversion
+- **Map Button**: Generates and displays interactive map visualization
+- **Save Button**: Exports processed data to CSV format
+- **Clear Button**: Resets application and clears all data
+
+### GUI Workflow
+1. **Launch Application**: Start the GUI with `python3 gui.py`
+2. **Select File**: Choose NMEA or CSV file using the file browser
+3. **Process Data**: Click "Process Data" to parse GPS coordinates
+4. **View Results**: Review data in the table and map panels
+5. **Export Data**: Save results as CSV for further analysis
+6. **Reset**: Clear all data to start a new session
+
+### Technical Implementation
+- **Framework**: PyQt5 for cross-platform GUI development
+- **Web Engine**: QtWebEngine for embedded map display
+- **Mapping**: Folium library for interactive map generation
+- **Data Processing**: Integration with existing NMEA parser functionality
 
 ## Visualizing Data in QGIS
 
@@ -118,9 +193,22 @@ The generated CSV file can be easily imported into QGIS for visualization and sp
 
 ## Code Structure
 
-### Functions
+### Command-Line Parser Functions
 - **`read_nmea_data(filename)`**: Reads NMEA sentences from file
 - **`nmea_sentence(sentence)`**: Parses individual NMEA sentences and extracts GPS data
+
+### GUI Application Classes
+- **`NMEAParserGUI`**: Main application class handling GUI interface and user interactions
+  - **`initUI()`**: Initializes the user interface layout and components
+  - **`select_file()`**: Handles file selection through dialog box
+  - **`process_data()`**: Processes NMEA or CSV files and extracts GPS data
+  - **`process_nmea_file()`**: Specifically handles NMEA format files
+  - **`process_csv_file()`**: Handles pre-processed CSV files
+  - **`update_table()`**: Updates the data table with processed GPS coordinates
+  - **`show_map()`**: Generates and displays interactive map with GPS points
+  - **`save_csv()`**: Exports processed data to CSV format
+  - **`clear_data()`**: Resets application state and clears all data
+  - **`load_default_map()`**: Loads initial map view centered on Turkey
 
 ### Main Process
 1. Read all NMEA sentences from input file
@@ -140,6 +228,10 @@ This parser can be used for:
 - 🧭 Navigation system development
 - 🌍 Geographic information system (GIS) applications
 - 🔬 Research in positioning and navigation
+- 🚗 Vehicle tracking and fleet management
+- 🎯 Field data collection and survey applications
+- 📱 Mobile application GPS data processing
+- 🛰️ GNSS data validation and quality assessment
 
 ## Future Enhancements
 - [ ] Support for other NMEA sentence types (RMC, VTG, etc.)
@@ -147,6 +239,12 @@ This parser can be used for:
 - [ ] Advanced filtering and data validation
 - [ ] Integration with mapping libraries
 - [ ] Support for different coordinate systems
+- [ ] GPS track analysis and statistics
+- [ ] Export to KML and GPX formats
+- [ ] Multi-language support for GUI
+- [ ] Dark theme option for GUI
+- [ ] Elevation profile visualization
+- [ ] Speed and heading calculations from GPS data
 
 ## License
 This project is open source and available under the [MIT License](LICENSE).
