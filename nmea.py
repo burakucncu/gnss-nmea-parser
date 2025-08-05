@@ -48,23 +48,48 @@ def nmea_sentence(sentence):
     longitude = split_sentence[4]
     lon_direction = split_sentence[5]
     altitude = split_sentence[9]
+    utc_time = split_sentence[1]
+    satellites = split_sentence[7]
+    fix_quality = split_sentence[6]
 
     lat_degrees = float(latitude[:2]) + float(latitude[2:]) / 60
     lon_degrees = float(longitude[:3]) + float(longitude[3:]) / 60
+
     if lat_direction == 'S':
         lat_degrees = -lat_degrees
+    else:
+        lat_degrees = lat_degrees
+
     if lon_direction == 'W':
         lon_degrees = -lon_degrees
+    else:
+        lon_degrees = lon_degrees
 
     split_sentence[2] = lat_degrees
     split_sentence[4] = lon_degrees
+
+    # UTC zamanını formatla (örnek: 170141.751 -> 17:01:41.751)
+    if '.' in utc_time:
+        # Nokta varsa, saat:dakika:saniye.milisaniye formatına çevir
+        time_parts = utc_time.split('.')
+        time_base = time_parts[0]  # 170141
+        milliseconds = time_parts[1]  # 751
+        if len(time_base) >= 6:
+            utc_time_formatted = f"{time_base[:2]}:{time_base[2:4]}:{time_base[4:]}.{milliseconds}"
+        else:
+            utc_time_formatted = utc_time
+    else:
+        # Nokta yoksa, standart formatla (6 karakter)
+        utc_time_formatted = f"{utc_time[:2]}:{utc_time[2:4]}:{utc_time[4:]}" if len(utc_time) >= 6 else utc_time
+
+    split_sentence[1] = utc_time_formatted
 
     print("NMEA Sentence Components:")
     for i in range(len(split_sentence)):
         print(f" {components[i]}: {split_sentence[i]}")
     
-    # Sadece lat, lon, altitude değerlerini döndür
-    return [lat_degrees, lon_degrees, altitude]
+    # lat, lon, altitude, utc_formatted, satellites, fix_quality değerlerini döndür
+    return [lat_degrees, lon_degrees, altitude, utc_time_formatted, satellites, fix_quality]
 
 # Txt dosyasından NMEA verilerini oku
 nmea_sentences = read_nmea_data("data.txt")
@@ -79,12 +104,12 @@ for i, sentence in enumerate(nmea_sentences):
     if result:  # Eğer geçerli bir sonuç döndüyse listeye ekle
         all_data.append(result)
 
-# Tüm verileri CSV dosyasına yaz
+
 if all_data:
     csv_file = "nmea_output.csv"
     with open(csv_file, mode='w', newline='') as file:
         writer = csv.writer(file)
-        writer.writerow(["latitude", "longitude", "altitude"])
+        writer.writerow(["latitude", "longitude", "altitude", "utc_time_formatted", "satellites", "fix_quality"])
         writer.writerows(all_data)
     print(f"\n{len(all_data)} satır veri '{csv_file}' dosyasına kaydedildi.")
 
