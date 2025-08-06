@@ -77,13 +77,16 @@ class NMEAParserGUI(QMainWindow):
         
         left_layout.addWidget(QLabel('GPS Verileri'))
         self.table = QTableWidget()
-        self.table.setColumnCount(3)
-        self.table.setHorizontalHeaderLabels(['Enlem (Latitude)', 'Boylam (Longitude)', 'Yükseklik (Altitude)'])
+        self.table.setColumnCount(6)
+        self.table.setHorizontalHeaderLabels(['Enlem (Latitude)', 'Boylam (Longitude)', 'Yükseklik (Altitude)', 'Time of Fix(UTC)', 'Number of Satellites', 'Fix Quality'])
         
         # Başlangıç sütun genişliklerini ayarla
         self.table.setColumnWidth(0, 150)  # Enlem sütunu
         self.table.setColumnWidth(1, 150)  # Boylam sütunu  
         self.table.setColumnWidth(2, 120)  # Yükseklik sütunu
+        self.table.setColumnWidth(3, 150)  # UTC sütunu
+        self.table.setColumnWidth(4, 150)  # Satellites sütunu
+        self.table.setColumnWidth(5, 100)  # Fix Quality sütunu
         
         left_layout.addWidget(self.table)
         splitter.addWidget(left_widget)
@@ -159,12 +162,15 @@ class NMEAParserGUI(QMainWindow):
                 headers = next(csv_reader, None)  # İlk satırı (başlıkları) atla
                 
                 for row in csv_reader:
-                    if len(row) >= 3:
+                    if len(row) >= 6:
                         try:
                             lat = float(row[0])
                             lon = float(row[1])
                             alt = float(row[2])
-                            self.processed_data.append([lat, lon, alt])
+                            utc = row[3]  
+                            satellites = int(row[4])
+                            fix_quality = int(row[5])
+                            self.processed_data.append([lat, lon, alt, utc, satellites, fix_quality])
                         except ValueError:
                             continue
             
@@ -223,12 +229,15 @@ class NMEAParserGUI(QMainWindow):
                     headers = next(csv_reader, None)  # Başlıkları atla
                     
                     for row in csv_reader:
-                        if len(row) >= 3:
+                        if len(row) >= 6:
                             try:
                                 lat = float(row[0])
                                 lon = float(row[1])
                                 alt = float(row[2])
-                                self.processed_data.append([lat, lon, alt])
+                                utc = row[3]  # UTC'yi string olarak al çünkü formatlanmış
+                                satellites = int(row[4])
+                                fix_quality = int(row[5])
+                                self.processed_data.append([lat, lon, alt, utc, satellites, fix_quality])
                             except ValueError:
                                 continue
                 
@@ -289,6 +298,9 @@ class NMEAParserGUI(QMainWindow):
         self.table.setColumnWidth(0, max(150, self.table.columnWidth(0)))  # Enlem için minimum 150px
         self.table.setColumnWidth(1, max(150, self.table.columnWidth(1)))  # Boylam için minimum 150px
         self.table.setColumnWidth(2, max(120, self.table.columnWidth(2)))  # Yükseklik için minimum 120px
+        self.table.setColumnWidth(3, max(150, self.table.columnWidth(3)))  # UTC için minimum 150px
+        self.table.setColumnWidth(4, max(150, self.table.columnWidth(4)))  # Satellites için minimum 150px
+        self.table.setColumnWidth(5, max(100, self.table.columnWidth(5)))  # Fix Quality için minimum 100px
     
     def load_default_map(self):
         """Varsayılan haritayı yükler"""
@@ -321,10 +333,14 @@ class NMEAParserGUI(QMainWindow):
             m = folium.Map(location=[avg_lat, avg_lon], zoom_start=15)
             
             # Her GPS noktası için marker ekle
-            for i, (lat, lon, alt) in enumerate(self.processed_data):
+            for i, data in enumerate(self.processed_data):
+                lat, lon, alt = data[0], data[1], data[2]
+                utc_time = data[3] if len(data) > 3 else "N/A"
+                satellites = data[4] if len(data) > 4 else "N/A"
+                fix_quality = data[5] if len(data) > 5 else "N/A"
                 folium.Marker(
                     [lat, lon],
-                    popup=f'Nokta {i+1}<br>Enlem: {lat}<br>Boylam: {lon}<br>Yükseklik: {alt}m',
+                    popup=f'Nokta {i+1}<br>Enlem: {lat}<br>Boylam: {lon}<br>Yükseklik: {alt}m<br>UTC: {utc_time}<br>Satellites: {satellites}<br>Fix Quality: {fix_quality}',
                     tooltip=f'Nokta {i+1}'
                 ).add_to(m)
             
@@ -372,7 +388,7 @@ class NMEAParserGUI(QMainWindow):
             try:
                 with open(file_path, mode='w', newline='', encoding='utf-8') as file:
                     writer = csv.writer(file)
-                    writer.writerow(["latitude", "longitude", "altitude"])
+                    writer.writerow(["latitude", "longitude", "altitude", "utc_time_formatted", "satellites", "fix_quality"])
                     writer.writerows(self.processed_data)
                 
                 QMessageBox.information(
