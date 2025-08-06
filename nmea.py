@@ -43,12 +43,12 @@ def nmea_sentence(sentence):
         print("Bu GGA cümlesi değil, atlanıyor.")
         return None
 
+    utc_time = split_sentence[1]
     latitude = split_sentence[2]
     lat_direction = split_sentence[3]
     longitude = split_sentence[4]
     lon_direction = split_sentence[5]
     altitude = split_sentence[9]
-    utc_time = split_sentence[1]
     satellites = split_sentence[7]
     fix_quality = split_sentence[6]
 
@@ -87,9 +87,9 @@ def nmea_sentence(sentence):
     print("NMEA Sentence Components:")
     for i in range(len(split_sentence)):
         print(f" {components[i]}: {split_sentence[i]}")
-    
-    # lat, lon, altitude, utc_formatted, satellites, fix_quality değerlerini döndür
-    return [lat_degrees, lon_degrees, altitude, utc_time_formatted, satellites, fix_quality]
+
+    # utc_time_formatted, lat, lon, altitude, satellites, fix_quality değerlerini döndür
+    return [utc_time_formatted, lat_degrees, lon_degrees, altitude, satellites, fix_quality]
 
 # Txt dosyasından NMEA verilerini oku
 nmea_sentences = read_nmea_data("data.txt")
@@ -109,7 +109,7 @@ if all_data:
     csv_file = "nmea_output.csv"
     with open(csv_file, mode='w', newline='') as file:
         writer = csv.writer(file)
-        writer.writerow(["latitude", "longitude", "altitude", "utc_time_formatted", "satellites", "fix_quality"])
+        writer.writerow(["utc_time_formatted", "latitude", "longitude", "altitude",  "satellites", "fix_quality"])
         writer.writerows(all_data)
     print(f"\n{len(all_data)} satır veri '{csv_file}' dosyasına kaydedildi.")
 
