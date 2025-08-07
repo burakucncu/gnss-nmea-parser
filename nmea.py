@@ -2,16 +2,16 @@ import csv
 
 
 def read_nmea_data(filename):
-    """Txt dosyasından NMEA verilerini okur ve liste olarak döndürür"""
+    """Reads NMEA data from txt file and returns as list"""
     sentences = []
     try:
-        with open(filename, 'r') as file:
+        with open(filename, 'r', encoding='utf-8') as file:
             for line in file:
                 line = line.strip()  
                 if line: 
                     sentences.append(line)
     except FileNotFoundError:
-        print(f"Dosya bulunamadı: {filename}")
+        print(f"File not found: {filename}")
         return []
     return sentences
 
@@ -40,7 +40,7 @@ def nmea_sentence(sentence):
     split_sentence = sentence.split(',')
 
     if not split_sentence[0].endswith("GGA"):
-        print("Bu GGA cümlesi değil, atlanıyor.")
+        print("This is not a GGA sentence, skipping.")
         return None
 
     utc_time = split_sentence[1]
@@ -88,30 +88,32 @@ def nmea_sentence(sentence):
     for i in range(len(split_sentence)):
         print(f" {components[i]}: {split_sentence[i]}")
 
-    # utc_time_formatted, lat, lon, altitude, satellites, fix_quality değerlerini döndür
+    # utc_time_formatted, lat, lon, altitude, satellites, fix_quality values
     return [utc_time_formatted, lat_degrees, lon_degrees, altitude, satellites, fix_quality]
 
-# Txt dosyasından NMEA verilerini oku
+# Read NMEA data from txt file
 nmea_sentences = read_nmea_data("data.txt")
 
-# Tüm verileri toplamak için liste
+# List to collect all data
 all_data = []
 
-# Her NMEA cümlesini işle
+# Process each NMEA sentence
 for i, sentence in enumerate(nmea_sentences):
-    print(f"\n--- NMEA Cümlesi {i+1} ---")
+    print(f"\n--- NMEA Sentence {i+1} ---")
     result = nmea_sentence(sentence)
-    if result:  # Eğer geçerli bir sonuç döndüyse listeye ekle
+    if result:  # If valid result returned, add to list
         all_data.append(result)
 
 
 if all_data:
     csv_file = "nmea_output.csv"
-    with open(csv_file, mode='w', newline='') as file:
+    with open(csv_file, mode='w', newline='', encoding='utf-8') as file:
         writer = csv.writer(file)
         writer.writerow(["utc_time_formatted", "latitude", "longitude", "altitude",  "satellites", "fix_quality"])
         writer.writerows(all_data)
-    print(f"\n{len(all_data)} satır veri '{csv_file}' dosyasına kaydedildi.")
+    print(f"\n{len(all_data)} rows of data saved to '{csv_file}'.")
+else:
+    print("No valid data found to save.")
 
 
 
