@@ -10,6 +10,8 @@ from PyQt5.QtWebEngineWidgets import QWebEngineView
 import csv
 import folium
 import tempfile
+import subprocess
+import shutil
 
 class NMEAParserGUI(QMainWindow):
     def __init__(self):
@@ -79,6 +81,10 @@ class NMEAParserGUI(QMainWindow):
         self.table = QTableWidget()
         self.table.setColumnCount(6)
         self.table.setHorizontalHeaderLabels(["Time of Fix(UTC)", 'Enlem (Latitude)', 'Boylam (Longitude)', 'Yükseklik (Altitude)', 'Number of Satellites', 'Fix Quality'])
+        
+        # Başlık hizalamasını ortalandı
+        header = self.table.horizontalHeader()
+        header.setDefaultAlignment(Qt.AlignCenter)
 
         # Başlangıç sütun genişliklerini ayarla
         self.table.setColumnWidth(0, 150)  # UTC sütunu
@@ -193,10 +199,6 @@ class NMEAParserGUI(QMainWindow):
     
     def process_nmea_file(self):
         """NMEA dosyasını işleme fonksiyonu"""
-        import subprocess
-        import tempfile
-        import shutil
-        
         try:
             # Geçici bir kopyasını oluştur ve data.txt olarak kaydet
             temp_dir = tempfile.mkdtemp()
@@ -217,7 +219,8 @@ class NMEAParserGUI(QMainWindow):
                 ['python3', 'nmea.py'], 
                 cwd=temp_dir,
                 capture_output=True, 
-                text=True
+                text=True,
+                encoding='utf-8'
             )
             
             # Oluşturulan CSV dosyasını oku
