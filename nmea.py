@@ -65,8 +65,8 @@ def nmea_sentence(sentence):
     else:
         lon_degrees = lon_degrees
 
-    split_sentence[2] = lat_degrees
-    split_sentence[4] = lon_degrees
+    split_sentence[2] = f"{lat_degrees:.6f}"
+    split_sentence[4] = f"{lon_degrees:.6f}"
 
     # UTC zamanını formatla (örnek: 170141.751 -> 17:01:41.751)
     if '.' in utc_time:
