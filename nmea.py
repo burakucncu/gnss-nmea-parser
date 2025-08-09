@@ -65,8 +65,12 @@ def nmea_sentence(sentence):
     else:
         lon_degrees = lon_degrees
 
-    split_sentence[2] = f"{lat_degrees:.6f}"
-    split_sentence[4] = f"{lon_degrees:.6f}"
+    # Yuvarlanmış değerleri hem ekran hem CSV için kullan
+    lat_degrees_formatted = f"{lat_degrees:.6f}"
+    lon_degrees_formatted = f"{lon_degrees:.6f}"
+    
+    split_sentence[2] = lat_degrees_formatted
+    split_sentence[4] = lon_degrees_formatted
 
     # UTC zamanını formatla (örnek: 170141.751 -> 17:01:41.751)
     if '.' in utc_time:
@@ -89,7 +93,7 @@ def nmea_sentence(sentence):
         print(f" {components[i]}: {split_sentence[i]}")
 
     # utc_time_formatted, lat, lon, altitude, satellites, fix_quality values
-    return [utc_time_formatted, lat_degrees, lon_degrees, altitude, satellites, fix_quality]
+    return [utc_time_formatted, lat_degrees_formatted, lon_degrees_formatted, altitude, satellites, fix_quality]
 
 # Read NMEA data from txt file
 nmea_sentences = read_nmea_data("data.txt")
