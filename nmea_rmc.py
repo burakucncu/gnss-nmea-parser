@@ -103,7 +103,7 @@ def nmea_sentence(sentence):
 
     return [utc_time_formatted, status, lat_degrees_formatted, lon_degrees_formatted, speed, direction, date, magnetic_variation, variation_direction, checksum]
 
-nmea_sentences = read_nmea_data("nmea_data_rmc.txt")
+nmea_sentences = read_nmea_data("data.txt")
 
 all_data = []
 rmc_sentence_count = 0

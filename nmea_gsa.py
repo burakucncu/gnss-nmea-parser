@@ -85,7 +85,7 @@ def nmea_sentence(sentence):
     # CSV yazma için dictionary return et, GUI için ise list olacak şekilde ayarla
     return data_dict
 
-nmea_sentences = read_nmea_data("nmea_data_gsa.txt")
+nmea_sentences = read_nmea_data("data.txt")
 
 all_data = []
 gsa_sentence_count = 0

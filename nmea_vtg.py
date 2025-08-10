@@ -63,7 +63,7 @@ def nmea_sentence(sentence):
 
     return [true_track, magnetic_track, speed_knots, speed_kilometers, checksum]
 
-nmea_sentences = read_nmea_data("nmea_data_vtg.txt")
+nmea_sentences = read_nmea_data("data.txt")
 
 all_data = []
 vtg_sentence_count = 0

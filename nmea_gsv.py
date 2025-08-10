@@ -83,7 +83,7 @@ def nmea_sentence(sentence):
     return split_sentence
 
 # Read NMEA data from txt file
-nmea_sentences = read_nmea_data("nmea_data_gsv.txt")
+nmea_sentences = read_nmea_data("data.txt")
 
 all_data = []
 gsv_sentence_count = 0
