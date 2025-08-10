@@ -16,7 +16,7 @@ def read_nmea_data(filename):
     return sentences
 
 components = [
-    "GGA Sentence",
+    "NMEA Sentence",
     "Time of fix (UTC)",
     "Latitude",
     "N/S Indicator",
@@ -88,7 +88,7 @@ def nmea_sentence(sentence):
 
     split_sentence[1] = utc_time_formatted
 
-    print("NMEA Sentence Components:")
+    print("GGA Sentence Components:")
     for i in range(len(split_sentence)):
         print(f" {components[i]}: {split_sentence[i]}")
 
@@ -103,7 +103,7 @@ all_data = []
 
 # Process each NMEA sentence
 for i, sentence in enumerate(nmea_sentences):
-    print(f"\n--- NMEA Sentence {i+1} ---")
+    print(f"\n--- NMEA GGA Sentence {i+1} ---")
     result = nmea_sentence(sentence)
     if result:  # If valid result returned, add to list
         all_data.append(result)
