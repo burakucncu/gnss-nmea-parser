@@ -56,10 +56,11 @@ def nmea_sentence(sentence):
     mode_1 = split_sentence[1]  # A = automatic, M = manual
     mode_2 = split_sentence[2]  # 1 = no fix, 2 = 2D fix, 3 = 3D fix
     satellite_ids = [sat for sat in split_sentence[3:15] if sat]  # Remove empty satellite IDs
-    pdop = split_sentence[15]
-    hdop = split_sentence[16]
-    vdop = split_sentence[17].split('*')[0]  # Remove checksum if present
+    pdop = split_sentence[15] if len(split_sentence) > 15 else ""
+    hdop = split_sentence[16] if len(split_sentence) > 16 else ""
+    vdop = split_sentence[17] if len(split_sentence) > 17 else ""
 
+    # Checksum'ı split_sentence'ın sonuna ekle
     split_sentence.append(checksum)
 
     print("GSA Sentence Components:")
@@ -67,7 +68,8 @@ def nmea_sentence(sentence):
         component_name = components[i] if i < len(components) else f"Field {i}"
         print(f" {component_name}: {split_sentence[i]}")
 
-    return {
+    # Dictionary formatında data oluştur (önceki format)
+    data_dict = {
         "Mode 1": mode_1,
         "Mode 2": mode_2,
         "Satellite IDs": satellite_ids,
@@ -75,6 +77,13 @@ def nmea_sentence(sentence):
         "HDOP": hdop,
         "VDOP": vdop
     }
+    
+    # GUI için list formatında da return et
+    satellite_ids_str = ','.join(satellite_ids)
+    data_list = [split_sentence[0], mode_1, mode_2, satellite_ids_str, pdop, hdop, vdop, checksum]
+    
+    # CSV yazma için dictionary return et, GUI için ise list olacak şekilde ayarla
+    return data_dict
 
 nmea_sentences = read_nmea_data("nmea_data_gsa.txt")
 
