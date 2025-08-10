@@ -103,7 +103,7 @@ for sentence in nmea_sentences:
         print(f"Error processing sentence: {e}")
 
 if all_data:
-    csv_file = "nmea_gsa_data.csv"
+    csv_file = "nmea_gsa_output.csv"
     with open(csv_file, 'w', newline='', encoding='utf-8') as file:
         writer = csv.writer(file)
         writer.writerow(["Mode 1", "Mode 2", "Satellite IDs", "PDOP", "HDOP", "VDOP"])
